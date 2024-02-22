@@ -27,7 +27,7 @@ async function sendUpdatedDirectory(
 
     // Call treeMaker with only one folder name
     const result = await treeMaker(dirName);
-    childLogger.trace('Tree made successfully', result);
+    childLogger.trace(result, 'Tree made successfully');
 
     const sendString = JSON.stringify(result);
 
@@ -50,8 +50,12 @@ async function sendUpdatedDirectory(
  * @param {vscode.ExtensionContext} context The extension context.
  */
 export function activate(context: vscode.ExtensionContext) {
+  logger.info('Activating the extension');
+
   const iconName = 'next-nav-icon';
   context.globalState.update(iconName, true);
+
+  logger.info('Creating the status bar item');
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right
   );
@@ -59,6 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
   statusBarItem.command = 'next-extension.next-nav';
   statusBarItem.tooltip = 'Launch Next Nav';
   statusBarItem.show();
+
+  logger.info(statusBarItem, 'Adding the status bar item to the subscriptions');
   context.subscriptions.push(statusBarItem);
 
   //runs when extension is called every time
