@@ -3,30 +3,59 @@ import * as path from 'path';
 import treeMaker from './makeTree';
 import { promises as fs } from 'fs';
 import { getValidDirectoryPath } from './functions';
+import { logger } from './utils/logger';
 
 let lastSubmittedDir: string | null = null; // directory user gave
 let webview: vscode.WebviewPanel | null = null;
 //get the directory to send to the React
+
+/**
+ * Send the updated directory to the webview.
+ *
+ * @param {vescode.WebviewPanel} webview The webview to send the updated directory to.
+ * @param {string} dirName The directory name to send to the webview.
+ */
 async function sendUpdatedDirectory(
   webview: vscode.WebviewPanel,
   dirName: string
 ): Promise<void> {
+  logger.info('About to send the updated directory:', dirName);
+  const childLogger = logger.child({ dirName });
+
   try {
+    childLogger.trace('About to make the tree');
+
     // Call treeMaker with only one folder name
     const result = await treeMaker(dirName);
+    childLogger.trace(result, 'Tree made successfully');
+
     const sendString = JSON.stringify(result);
-    //console.log(sendString);
+
+    childLogger.trace('Sending the tree to the webview');
     webview.webview.postMessage({ command: 'sendString', data: sendString });
   } catch (error: any) {
     vscode.window.showErrorMessage(
       'Error sending updated directory: ' + error.message
     );
+    logger.error('Error sending updated directory:', error.message);
+  } finally {
+    logger.info('Finished sending the updated directory');
   }
 }
 
+/**
+ * Activate the extension.
+ * This looks like it could be refactored a bit.
+ *
+ * @param {vscode.ExtensionContext} context The extension context.
+ */
 export function activate(context: vscode.ExtensionContext) {
+  logger.info('Activating the extension');
+
   const iconName = 'next-nav-icon';
   context.globalState.update(iconName, true);
+
+  logger.info('Creating the status bar item');
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right
   );
@@ -34,6 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
   statusBarItem.command = 'next-extension.next-nav';
   statusBarItem.tooltip = 'Launch Next Nav';
   statusBarItem.show();
+
+  logger.info(statusBarItem, 'Adding the status bar item to the subscriptions');
   context.subscriptions.push(statusBarItem);
 
   //runs when extension is called every time
