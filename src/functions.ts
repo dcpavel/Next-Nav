@@ -3,8 +3,6 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { logger } from './utils/logger';
 
-isSubdirectory;
-
 /**
  * Checks that child directory is within parent directory
  *
