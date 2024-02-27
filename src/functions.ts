@@ -3,6 +3,8 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { logger } from './utils/logger';
 
+isSubdirectory;
+
 /**
  * Checks that child directory is within parent directory
  *
@@ -19,7 +21,6 @@ function isSubdirectory(parent: string, child: string) {
   logger.info('Parent path: ' + parentPath);
   logger.info('Child path: ' + childPath);
 
-  // Not sure if we should be
   const isChild = parentPath.startsWith(childPath);
   logger.info('Is subdirectory: ' + isChild);
   return isChild;
