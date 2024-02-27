@@ -71,7 +71,7 @@ export async function getValidDirectoryPath(dirPath: string): Promise<string> {
     );
     return absoluteDirPath; // Return the validated absolute directory path
   } catch (err: any) {
-    logger.error('Error validating directory path', err);
+    logger.error(err, 'Error validating directory path');
     return '';
   }
 }

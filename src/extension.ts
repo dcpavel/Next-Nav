@@ -71,7 +71,7 @@ async function sendUpdatedDirectory(
     vscode.window.showErrorMessage(
       'Error sending updated directory: ' + error.message
     );
-    logger.error('Error sending updated directory:', error.message);
+    logger.error(error, 'Error sending updated directory');
   } finally {
     logger.info('Finished sending the updated directory');
   }
@@ -165,9 +165,9 @@ async function commandHandler(context: vscode.ExtensionContext): Promise<void> {
           </script>
         </body>
         </html>`;
-    logger.info('Changed the webview html to include the React bundle');
+    logger.info('Changed the webview html to include the React bundle.');
   } catch (err) {
-    logger.error('Error reading the bundle:', err);
+    logger.error(err, 'Error reading the bundle.');
   }
   // vscode.window.showInformationMessage('Welcome to Next.Nav!');
 }
