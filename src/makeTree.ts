@@ -1,11 +1,9 @@
-import * as fsPromises from 'fs/promises';
-import { Dirent } from 'fs';
+import { readdir } from 'fs/promises';
 import { createInterface } from 'readline';
 import { createReadStream } from 'fs';
-import * as path from 'path';
+import { basename, join } from 'path';
 import { Directory } from './types';
 import { logger } from './utils/logger';
-import { log } from 'console';
 
 /**
  * Checks if a file contains the 'use client' directive
@@ -119,7 +117,7 @@ export default async function treeMaker(
   const structure: Directory[] = [
     {
       id: 0,
-      folderName: path.basename(validDir),
+      folderName: basename(validDir),
       parentNode: null,
       path: validDir,
       contents: [],
@@ -132,13 +130,13 @@ export default async function treeMaker(
     const childLogger = logger.child({ dir: dir });
 
     childLogger.info('Listing files in directory');
-    const entities = await fsPromises.readdir(dir, { withFileTypes: true });
+    const entities = await readdir(dir, { withFileTypes: true });
 
     for (const entity of entities) {
       const entityLogger = childLogger.child({ entity: entity.name });
       entityLogger.info('Checking entity');
 
-      const fullPath = path.join(dir, entity.name);
+      const fullPath = join(dir, entity.name);
 
       if (entity.isDirectory()) {
         entityLogger.info('Found directory');

@@ -1,6 +1,6 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import * as vscode from 'vscode';
+import { stat as fs_stat } from 'fs/promises';
+import { resolve, isAbsolute, join } from 'path';
+import { workspace } from 'vscode';
 import { logger } from './utils/logger';
 
 /**
@@ -13,14 +13,14 @@ import { logger } from './utils/logger';
 function isSubdirectory(parent: string, child: string) {
   logger.info('Checking if ' + child + ' is a subdirectory of ' + parent);
 
-  const parentPath = path.resolve(parent).toLowerCase();
-  const childPath = path.resolve(child).toLowerCase();
+  const parentPath = resolve(parent).toLowerCase();
+  const childPath = resolve(child).toLowerCase();
 
   logger.info('Parent path: ' + parentPath);
   logger.info('Child path: ' + childPath);
 
   const isChild = parentPath.startsWith(childPath);
-  logger.info('Is subdirectory: ' + isChild);
+  logger.info('Is subdirectory?: ' + isChild);
   return isChild;
 }
 
@@ -33,19 +33,22 @@ function isSubdirectory(parent: string, child: string) {
 export async function getValidDirectoryPath(dirPath: string): Promise<string> {
   logger.info('Validating directory path: ' + dirPath);
 
+  logger.info('Checking if workspace folders exist');
+  const workspaceFolders = workspace.workspaceFolders;
+
   try {
-    if (!vscode.workspace.workspaceFolders) {
+    if (!workspaceFolders) {
       logger.warn('No workspace folders found');
       return '';
     }
 
-    const workspaceDir = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const workspaceDir = workspaceFolders[0].uri.fsPath;
     logger.info('Workspace directory: ' + workspaceDir);
 
     // Convert to absolute path if it is a relative path
-    const absoluteDirPath = path.isAbsolute(dirPath)
+    const absoluteDirPath = isAbsolute(dirPath)
       ? dirPath
-      : path.join(workspaceDir, dirPath);
+      : join(workspaceDir, dirPath);
     logger.info('Absolute directory path: ' + absoluteDirPath);
 
     // Validate if this path is within the workspace directory
@@ -58,7 +61,7 @@ export async function getValidDirectoryPath(dirPath: string): Promise<string> {
       return '';
     }
     // Check if the directory actually exists
-    const stat = await fs.stat(absoluteDirPath);
+    const stat = await fs_stat(absoluteDirPath);
     if (!stat.isDirectory()) {
       logger.warn('Directory does not exist', absoluteDirPath);
       return '';

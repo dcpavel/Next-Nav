@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
+import { join as path_join, normalize as path_normalize } from 'path';
 import treeMaker from './makeTree';
 import { promises as fs } from 'fs';
 import { getValidDirectoryPath } from './functions';
@@ -139,7 +139,7 @@ async function commandHandler(context: vscode.ExtensionContext): Promise<void> {
   try {
     logger.info('Reading the bundle');
     //bundle for react code
-    const bundlePath = path.join(
+    const bundlePath = path_join(
       context.extensionPath,
       'webview-react-app',
       'dist',
@@ -259,7 +259,7 @@ async function submitDir(
   formCheck: boolean
 ): Promise<object> {
   const folderLocation = await getValidDirectoryPath(
-    path.normalize(folderName)
+    path_normalize(folderName)
   );
 
   if (folderLocation) {
@@ -293,7 +293,7 @@ async function openFile(filePath: string): Promise<object> {
  * @returns The response to send to the webview
  */
 async function addFile(filePath: string): Promise<object> {
-  await fs.writeFile(path.normalize(filePath), '');
+  await fs.writeFile(path_normalize(filePath), '');
   return { command: 'added_addFile' };
 }
 
@@ -304,7 +304,7 @@ async function addFile(filePath: string): Promise<object> {
  * @returns The response to send to the webview
  */
 async function addFolder(folderPath: string): Promise<object> {
-  await fs.mkdir(path.normalize(folderPath));
+  await fs.mkdir(path_normalize(folderPath));
   return { command: 'added_addFolder' };
 }
 
@@ -315,7 +315,7 @@ async function addFolder(folderPath: string): Promise<object> {
  * @returns The response to send to the webview
  */
 async function deleteFile(filePath: string): Promise<object> {
-  const uri = vscode.Uri.file(path.normalize(filePath));
+  const uri = vscode.Uri.file(path_normalize(filePath));
   if (await fs.stat(filePath)) {
     await vscode.workspace.fs.delete(uri, { useTrash: true });
   } else {
@@ -334,7 +334,7 @@ async function deleteFile(filePath: string): Promise<object> {
  * @returns The response to send to the webview
  */
 async function deleteFolder(folderPath: string): Promise<object> {
-  const uri = vscode.Uri.file(path.normalize(folderPath));
+  const uri = vscode.Uri.file(path_normalize(folderPath));
 
   //delete folder and subfolders
   if (await fs.stat(folderPath)) {
