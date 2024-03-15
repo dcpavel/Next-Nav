@@ -39,6 +39,7 @@ export function activate(context: vscode.ExtensionContext): void {
       await commandHandler(context);
     }
   );
+  logger.info(disposable, 'Adding the command to the subscriptions');
   context.subscriptions.push(disposable);
 }
 export function deactivate() {}
@@ -146,7 +147,7 @@ async function commandHandler(context: vscode.ExtensionContext): Promise<void> {
       'bundle.js'
     );
 
-    logger.info('Opening the file at', bundlePath);
+    logger.info(`Opening the file at ${bundlePath}`);
     const bundleContent = await fs.readFile(bundlePath, 'utf-8');
     logger.info('file opened successfully');
     //html in the webview to put our react code into

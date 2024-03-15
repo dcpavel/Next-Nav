@@ -22,7 +22,7 @@ const fileTransport = pino.pino.transport({
     {
       target: 'pino/file',
       options: {
-        destination: '../../logs/src.log',
+        destination: '../../NextNav/src.log',
       },
     },
   ],
@@ -31,14 +31,11 @@ const fileTransport = pino.pino.transport({
 /**
  * The pino logger.
  */
-export const logger = pino.pino(
-  {
-    formatters: {
-      level: (label: string) => {
-        return { level: label.toUpperCase() };
-      },
+export const logger = pino.pino({
+  formatters: {
+    level: (label: string) => {
+      return { level: label.toUpperCase() };
     },
-    timestamp: pino.stdTimeFunctions.isoTime,
   },
-  fileTransport
-);
+  timestamp: pino.stdTimeFunctions.isoTime,
+});

@@ -54,23 +54,20 @@ export async function getValidDirectoryPath(dirPath: string): Promise<string> {
     // Validate if this path is within the workspace directory
     if (!isSubdirectory(absoluteDirPath, workspaceDir)) {
       logger.warn(
-        'Directory path is not within the workspace directory',
-        workspaceDir,
-        absoluteDirPath
+        `Directory path ${absoluteDirPath} is not within the workspace directory: ${workspaceDir}`
       );
       return '';
     }
     // Check if the directory actually exists
     const stat = await fs_stat(absoluteDirPath);
     if (!stat.isDirectory()) {
-      logger.warn('Directory does not exist', absoluteDirPath);
+      logger.warn('Directory does not exist: ' + absoluteDirPath);
       return '';
     }
     //logging path to test in windows
 
     logger.info(
-      'Path is a directory in the workspace, returning',
-      absoluteDirPath
+      'Path is a directory in the workspace, returning ' + absoluteDirPath
     );
     return absoluteDirPath; // Return the validated absolute directory path
   } catch (err: any) {
